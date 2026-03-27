@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-import pytest
 from typing import Any
-from unittest.mock import Mock, AsyncMock
+
+import pytest
 
 
 class MockService:

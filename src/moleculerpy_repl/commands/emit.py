@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from typing import Any
 
-from .base import BaseCommand, CommandResult
 from ..parser import ParsedArgs
+from .base import BaseCommand, CommandResult
 
 
 class EmitCommand(BaseCommand):

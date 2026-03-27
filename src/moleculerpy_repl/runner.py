@@ -33,9 +33,10 @@ import os
 import signal
 import sys
 import time
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 __all__ = ["Runner", "RunnerConfig", "run_cli", "main"]
 
@@ -88,7 +89,7 @@ class WorkerManager:
     def __init__(
         self,
         num_workers: int,
-        worker_fn: Callable[[int, "RunnerConfig"], None],
+        worker_fn: Callable[[int, RunnerConfig], None],
         config: RunnerConfig,
     ):
         self.num_workers = num_workers
@@ -246,8 +247,8 @@ class Runner:
         """Create a standard ServiceBroker instance."""
         try:
             moleculerpy_module = importlib.import_module("moleculerpy")
-            service_broker_cls = getattr(moleculerpy_module, "ServiceBroker")
-            settings_cls = getattr(moleculerpy_module, "Settings")
+            service_broker_cls = moleculerpy_module.ServiceBroker
+            settings_cls = moleculerpy_module.Settings
         except ImportError:
             print("Error: MoleculerPy is not installed. Install with: pip install moleculerpy")
             sys.exit(1)
@@ -345,8 +346,8 @@ class Runner:
 
         try:
             moleculerpy_module = importlib.import_module("moleculerpy")
-            service_broker_cls = getattr(moleculerpy_module, "ServiceBroker")
-            settings_cls = getattr(moleculerpy_module, "Settings")
+            service_broker_cls = moleculerpy_module.ServiceBroker
+            settings_cls = moleculerpy_module.Settings
         except ImportError:
             print("Error: MoleculerPy is not installed. Install with: pip install moleculerpy")
             sys.exit(1)
@@ -502,7 +503,7 @@ def _is_service_class(obj: Any) -> bool:
         return False
 
     try:
-        service_cls = getattr(importlib.import_module("moleculerpy"), "Service")
+        service_cls = importlib.import_module("moleculerpy").Service
     except (ImportError, AttributeError):
         service_cls = None
 

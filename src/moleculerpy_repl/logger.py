@@ -12,14 +12,14 @@ Inspired by Moleculer.js logging system with:
 
 from __future__ import annotations
 
-import sys
-import time
 import readline
+import sys
 import threading
+import time
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
-from typing import Any, TextIO, Callable
+from typing import Any, TextIO
 
 __all__ = [
     "Logger",

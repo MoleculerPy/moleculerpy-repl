@@ -2,18 +2,20 @@
 
 from __future__ import annotations
 
+from unittest.mock import AsyncMock, Mock
+
 import pytest
-from unittest.mock import Mock, AsyncMock, patch
-from moleculerpy_repl.parser import ParsedArgs
-from moleculerpy_repl.commands.base import BaseCommand, CommandResult, CommandRegistry
+
+from moleculerpy_repl.commands import create_default_registry
+from moleculerpy_repl.commands.actions import ActionsCommand
+from moleculerpy_repl.commands.base import BaseCommand, CommandResult
 from moleculerpy_repl.commands.dcall import DirectCallCommand
+from moleculerpy_repl.commands.events import EventsCommand
 from moleculerpy_repl.commands.info import InfoCommand
 from moleculerpy_repl.commands.nodes import NodesCommand
-from moleculerpy_repl.commands.actions import ActionsCommand
 from moleculerpy_repl.commands.services import ServicesCommand
-from moleculerpy_repl.commands.events import EventsCommand
-from moleculerpy_repl.commands import create_default_registry
-from moleculerpy_repl.output import OutputFormatter, RICH_AVAILABLE
+from moleculerpy_repl.output import RICH_AVAILABLE, OutputFormatter
+from moleculerpy_repl.parser import ParsedArgs
 
 
 class TestCreateDefaultRegistry:

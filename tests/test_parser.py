@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import pytest
 from moleculerpy_repl.parser import ArgParser, ParsedArgs
 
 

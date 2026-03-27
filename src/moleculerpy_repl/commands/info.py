@@ -6,8 +6,8 @@ import platform
 import sys
 from typing import Any
 
-from .base import BaseCommand, CommandResult
 from ..parser import ParsedArgs
+from .base import BaseCommand, CommandResult
 
 
 class InfoCommand(BaseCommand):

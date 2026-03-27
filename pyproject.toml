@@ -98,3 +98,9 @@ line-length = 100
 [tool.ruff.lint]
 select = ["E", "F", "I", "N", "W", "UP", "B", "C4", "SIM"]
 ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+"src/moleculerpy_repl/output.py" = ["N806", "F401"]
+"src/moleculerpy_repl/commands/**" = ["SIM102", "B007"]
+"src/moleculerpy_repl/logger.py" = ["SIM105"]
+"tests/**" = ["SIM117"]

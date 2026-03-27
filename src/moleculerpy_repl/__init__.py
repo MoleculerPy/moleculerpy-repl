@@ -12,10 +12,10 @@ Or via broker method:
 
 from importlib.metadata import PackageNotFoundError, version
 
-from .repl import REPL, REPLConfig
-from .commands.base import BaseCommand, CommandResult, CommandRegistry
-from .parser import ArgParser, ParsedArgs
+from .commands.base import BaseCommand, CommandRegistry, CommandResult
 from .output import OutputFormatter
+from .parser import ArgParser, ParsedArgs
+from .repl import REPL, REPLConfig
 from .runner import Runner, RunnerConfig, run_cli
 
 try:

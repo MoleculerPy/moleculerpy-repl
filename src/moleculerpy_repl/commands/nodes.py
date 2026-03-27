@@ -3,12 +3,13 @@
 from __future__ import annotations
 
 import os
-import psutil
 from typing import Any
 
-from .base import BaseCommand, CommandResult
-from ..parser import ParsedArgs
+import psutil
+
 from ..output import OutputFormatter
+from ..parser import ParsedArgs
+from .base import BaseCommand, CommandResult
 
 
 class NodesCommand(BaseCommand):

@@ -3,16 +3,17 @@
 from __future__ import annotations
 
 import pytest
-from moleculerpy_repl.parser import ParsedArgs
-from moleculerpy_repl.commands.base import BaseCommand, CommandResult, CommandRegistry
+
+from moleculerpy_repl.commands.actions import ActionsCommand
+from moleculerpy_repl.commands.base import CommandRegistry, CommandResult
 from moleculerpy_repl.commands.call import CallCommand
 from moleculerpy_repl.commands.dcall import DirectCallCommand
-from moleculerpy_repl.commands.emit import EmitCommand, BroadcastCommand
-from moleculerpy_repl.commands.actions import ActionsCommand
-from moleculerpy_repl.commands.services import ServicesCommand
-from moleculerpy_repl.commands.nodes import NodesCommand
+from moleculerpy_repl.commands.emit import BroadcastCommand, EmitCommand
 from moleculerpy_repl.commands.events import EventsCommand
 from moleculerpy_repl.commands.info import InfoCommand
+from moleculerpy_repl.commands.nodes import NodesCommand
+from moleculerpy_repl.commands.services import ServicesCommand
+from moleculerpy_repl.parser import ParsedArgs
 
 
 class TestCommandResult:

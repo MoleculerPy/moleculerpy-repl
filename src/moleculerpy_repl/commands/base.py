@@ -57,7 +57,7 @@ class BaseCommand(ABC):
             self.aliases = ()
 
     @abstractmethod
-    async def execute(self, broker: Any, args: "ParsedArgs") -> CommandResult:
+    async def execute(self, broker: Any, args: ParsedArgs) -> CommandResult:
         """Execute the command.
 
         Args:

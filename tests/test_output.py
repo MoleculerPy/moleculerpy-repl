@@ -2,10 +2,9 @@
 
 from __future__ import annotations
 
-import io
-import sys
 import pytest
-from moleculerpy_repl.output import OutputFormatter, RICH_AVAILABLE
+
+from moleculerpy_repl.output import RICH_AVAILABLE, OutputFormatter
 
 
 class TestOutputFormatterNoColors:

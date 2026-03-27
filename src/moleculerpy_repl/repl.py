@@ -8,14 +8,15 @@ from __future__ import annotations
 
 import asyncio
 import cmd
+import contextlib
 import readline
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, cast
 
-from .commands.base import BaseCommand, CommandRegistry, CommandResult
+from .commands.base import BaseCommand, CommandRegistry
 from .output import OutputFormatter
-from .parser import ArgParser, ParsedArgs
+from .parser import ArgParser
 
 if TYPE_CHECKING:
     pass  # MoleculerPy types would go here
@@ -99,7 +100,7 @@ class REPL(cmd.Cmd):
 
     def _setup_intro(self) -> None:
         """Setup intro banner."""
-        version = getattr(self.broker, "__version__", None) or getattr(
+        getattr(self.broker, "__version__", None) or getattr(
             self.broker, "version", "unknown"
         )
         node_id = (
@@ -325,14 +326,10 @@ class REPL(cmd.Cmd):
                 pass
 
             # Save history
-            try:
+            with contextlib.suppress(OSError):
                 readline.write_history_file(histfile)
-            except OSError:
-                pass
 
             # Stop broker on exit
             if hasattr(self.broker, "stop"):
-                try:
+                with contextlib.suppress(Exception):
                     await self.broker.stop()
-                except Exception:
-                    pass

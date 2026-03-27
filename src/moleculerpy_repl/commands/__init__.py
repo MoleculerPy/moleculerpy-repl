@@ -3,13 +3,12 @@
 This module provides all built-in commands and the registry.
 """
 
-from .base import BaseCommand, CommandRegistry, CommandResult
-
 # Import all command classes
 from .actions import ActionsCommand
+from .base import BaseCommand, CommandRegistry, CommandResult
 from .call import CallCommand
 from .dcall import DirectCallCommand
-from .emit import EmitCommand, BroadcastCommand
+from .emit import BroadcastCommand, EmitCommand
 from .events import EventsCommand
 from .info import InfoCommand
 from .loglevel import LogLevelCommand

@@ -2,21 +2,21 @@
 
 from __future__ import annotations
 
-import asyncio
 import os
 import sys
 import tempfile
 from pathlib import Path
-from unittest.mock import Mock, patch, AsyncMock
+from unittest.mock import AsyncMock, Mock, patch
+
 import pytest
 
 from moleculerpy_repl.runner import (
     Runner,
     RunnerConfig,
     WorkerManager,
-    run_cli,
-    _load_env_file,
     _is_service_class,
+    _load_env_file,
+    run_cli,
 )
 
 

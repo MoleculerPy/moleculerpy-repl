@@ -2,16 +2,18 @@
 
 from __future__ import annotations
 
+from unittest.mock import AsyncMock, Mock
+
 import pytest
-from unittest.mock import Mock, AsyncMock
-from moleculerpy_repl.parser import ParsedArgs
-from moleculerpy_repl.commands.call import CallCommand
-from moleculerpy_repl.commands.emit import EmitCommand, BroadcastCommand
+
 from moleculerpy_repl.commands.actions import ActionsCommand
-from moleculerpy_repl.commands.services import ServicesCommand
-from moleculerpy_repl.commands.nodes import NodesCommand
+from moleculerpy_repl.commands.call import CallCommand
+from moleculerpy_repl.commands.emit import BroadcastCommand, EmitCommand
 from moleculerpy_repl.commands.events import EventsCommand
 from moleculerpy_repl.commands.info import InfoCommand
+from moleculerpy_repl.commands.nodes import NodesCommand
+from moleculerpy_repl.commands.services import ServicesCommand
+from moleculerpy_repl.parser import ParsedArgs
 
 
 class TestCallCommandExtended:
@@ -521,8 +523,9 @@ class TestLogLevelCommand:
 
     def test_loglevel_completions(self) -> None:
         """Test log level completions."""
-        from moleculerpy_repl.commands.loglevel import LogLevelCommand
         from unittest.mock import Mock
+
+        from moleculerpy_repl.commands.loglevel import LogLevelCommand
 
         cmd = LogLevelCommand()
         broker = Mock()
@@ -536,7 +539,7 @@ class TestLogLevelCommand:
     @pytest.mark.asyncio
     async def test_loglevel_all_levels(self, mock_broker) -> None:
         """Test all valid log levels."""
-        from moleculerpy_repl.commands.loglevel import LogLevelCommand, VALID_LEVELS
+        from moleculerpy_repl.commands.loglevel import VALID_LEVELS, LogLevelCommand
         from moleculerpy_repl.logger import LoggerFactory
 
         mock_broker.logger_factory = LoggerFactory(node_id="test")

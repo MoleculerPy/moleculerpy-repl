@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-import pytest
-import tempfile
 import json
+import tempfile
 from pathlib import Path
-from moleculerpy_repl.parser import ArgParser, ParsedArgs
+
+from moleculerpy_repl.parser import ArgParser
 
 
 class TestLoadFlag:

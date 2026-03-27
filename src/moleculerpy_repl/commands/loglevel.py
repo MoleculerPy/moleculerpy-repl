@@ -4,10 +4,9 @@ from __future__ import annotations
 
 from typing import Any
 
-from .base import BaseCommand, CommandResult
+from ..logger import LoggerFactory
 from ..parser import ParsedArgs
-from ..logger import LogLevel, LoggerFactory
-
+from .base import BaseCommand, CommandResult
 
 # Valid log levels
 VALID_LEVELS = ["trace", "debug", "info", "warn", "error", "fatal"]

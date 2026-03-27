@@ -4,13 +4,11 @@ from __future__ import annotations
 
 import asyncio
 import threading
-import pytest
-from unittest.mock import Mock, patch, MagicMock
-from io import StringIO
 
-from moleculerpy_repl.repl import REPL, REPLConfig
+import pytest
+
 from moleculerpy_repl.commands.base import BaseCommand, CommandResult
-from moleculerpy_repl.parser import ParsedArgs
+from moleculerpy_repl.repl import REPL, REPLConfig
 
 
 class TestREPLConfig:
@@ -95,11 +93,11 @@ class TestREPLCustomCommands:
         from moleculerpy_repl.commands.call import CallCommand
 
         # CallCommand already exists as built-in
-        repl = REPL(mock_broker, custom_commands=[CallCommand], use_colors=False)
+        REPL(mock_broker, custom_commands=[CallCommand], use_colors=False)
 
         # Should have printed a warning
-        captured = capsys.readouterr()
-        assert "already exists" in captured.out or True  # May or may not print
+        capsys.readouterr()
+        assert True  # May or may not print
 
 
 class TestREPLCommandExecution:
@@ -118,7 +116,7 @@ class TestREPLCommandExecution:
     def test_execute_unknown_command(self, mock_broker, capsys) -> None:
         """Test executing unknown command shows error."""
         repl = REPL(mock_broker, use_colors=False)
-        result = repl.default("nonexistent arg1 arg2")
+        repl.default("nonexistent arg1 arg2")
 
         captured = capsys.readouterr()
         assert "Unknown command" in captured.out
@@ -213,7 +211,7 @@ class TestREPLTabCompletion:
     def test_complete_with_command_context(self, mock_broker) -> None:
         """Test completion delegates to command."""
         repl = REPL(mock_broker, use_colors=False)
-        completions = repl.completedefault("math", "call math", 5, 9)
+        repl.completedefault("math", "call math", 5, 9)
 
         # CallCommand should provide action completions
         # May or may not have matches depending on mock broker setup

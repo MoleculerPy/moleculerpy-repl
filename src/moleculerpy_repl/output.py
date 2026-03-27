@@ -14,8 +14,8 @@ from __future__ import annotations
 __all__ = ["OutputFormatter", "RICH_AVAILABLE"]
 
 import json
-from io import StringIO
 from collections.abc import Mapping, Sequence
+from io import StringIO
 from typing import Any
 
 OutputRecord = Mapping[str, Any]
@@ -24,8 +24,8 @@ OutputRecord = Mapping[str, Any]
 try:
     from rich.console import Console
     from rich.json import JSON
-    from rich.table import Table
     from rich.style import Style
+    from rich.table import Table
     from rich.text import Text
 
     RICH_AVAILABLE = True
