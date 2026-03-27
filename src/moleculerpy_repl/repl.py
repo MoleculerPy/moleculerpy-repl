@@ -100,9 +100,7 @@ class REPL(cmd.Cmd):
 
     def _setup_intro(self) -> None:
         """Setup intro banner."""
-        getattr(self.broker, "__version__", None) or getattr(
-            self.broker, "version", "unknown"
-        )
+        getattr(self.broker, "__version__", None) or getattr(self.broker, "version", "unknown")
         node_id = (
             getattr(self.broker, "nodeID", None)
             or getattr(self.broker, "node_id", None)
