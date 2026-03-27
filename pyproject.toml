@@ -1,0 +1,100 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "moleculerpy-repl"
+version = "0.14.2"
+description = "Interactive CLI shell for MoleculerPy microservices framework"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.12"
+authors = [
+    {name = "Eli Rum", email = "explosivebit@gmail.com"}
+]
+maintainers = [
+    {name = "MoleculerPy Team"}
+]
+keywords = ["moleculer", "microservices", "repl", "cli", "moleculerpy"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Framework :: AsyncIO",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Typing :: Typed",
+]
+
+dependencies = [
+    "moleculerpy>=0.14.1",
+    "psutil>=5.9",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+    "mypy>=1.8",
+    "ruff>=0.2",
+    "rich>=13.0",
+]
+rich = [
+    "rich>=13.0",
+]
+full = [
+    "rich>=13.0",
+    "prompt_toolkit>=3.0",
+]
+
+[project.scripts]
+moleculerpy-repl = "moleculerpy_repl.__main__:main"
+moleculerpy-runner = "moleculerpy_repl.runner:main"
+
+[project.urls]
+Homepage = "https://moleculerpy.services"
+Documentation = "https://moleculerpy.services/docs/repl"
+Repository = "https://github.com/MoleculerPy/moleculerpy-repl"
+Issues = "https://github.com/MoleculerPy/moleculerpy-repl/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+moleculerpy_repl = ["py.typed"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "strict"
+asyncio_default_fixture_loop_scope = "function"
+testpaths = ["tests"]
+pythonpath = ["src"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --strict-markers --tb=short"
+markers = [
+    "slow: marks tests as slow",
+    "integration: marks integration tests",
+    "unit: marks unit tests",
+]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+
+[[tool.mypy.overrides]]
+module = ["psutil.*", "yaml.*", "moleculerpy.*"]
+ignore_missing_imports = true
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP", "B", "C4", "SIM"]
+ignore = ["E501"]
