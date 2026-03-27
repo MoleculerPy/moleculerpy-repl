@@ -29,7 +29,7 @@ class DirectCallCommand(BaseCommand):
         if len(args.positional) < 2:
             return CommandResult(
                 success=False,
-                error="Node ID and action name required. Usage: dcall <nodeID> <action> [params...]"
+                error="Node ID and action name required. Usage: dcall <nodeID> <action> [params...]",
             )
 
         node_id = args.positional[0]
@@ -51,11 +51,15 @@ class DirectCallCommand(BaseCommand):
 
             # Check if node is valid (optional - some brokers may not have this)
             if node is None and hasattr(broker, "node_catalog"):
-                available_nodes = list(broker.node_catalog.nodes.keys()) if hasattr(broker.node_catalog, "nodes") else []
+                available_nodes = (
+                    list(broker.node_catalog.nodes.keys())
+                    if hasattr(broker.node_catalog, "nodes")
+                    else []
+                )
                 if available_nodes:
                     return CommandResult(
                         success=False,
-                        error=f"Node '{node_id}' not found. Available: {', '.join(available_nodes)}"
+                        error=f"Node '{node_id}' not found. Available: {', '.join(available_nodes)}",
                     )
 
         # Build call options
@@ -77,10 +81,7 @@ class DirectCallCommand(BaseCommand):
 
             # Call the action with nodeID
             result = await broker.call(
-                action_name,
-                args.payload,
-                meta=args.meta if args.meta else None,
-                **call_opts
+                action_name, args.payload, meta=args.meta if args.meta else None, **call_opts
             )
 
             elapsed = (time.perf_counter() - start_time) * 1000  # ms
@@ -101,8 +102,7 @@ class DirectCallCommand(BaseCommand):
                 error_msg = str(e.args[0])
 
             return CommandResult(
-                success=False,
-                error=f"Direct call to [{node_id}] failed: {error_msg}"
+                success=False, error=f"Direct call to [{node_id}] failed: {error_msg}"
             )
 
     def get_completions(self, broker: Any, text: str, line: str) -> list[str]:

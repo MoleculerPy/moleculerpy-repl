@@ -20,8 +20,7 @@ class EmitCommand(BaseCommand):
         """Execute the emit command."""
         if not args.positional:
             return CommandResult(
-                success=False,
-                error="Event name required. Usage: emit <event> [params...]"
+                success=False, error="Event name required. Usage: emit <event> [params...]"
             )
 
         event_name = args.positional[0]
@@ -75,8 +74,7 @@ class BroadcastCommand(BaseCommand):
         """Execute the broadcast command."""
         if not args.positional:
             return CommandResult(
-                success=False,
-                error="Event name required. Usage: broadcast <event> [params...]"
+                success=False, error="Event name required. Usage: broadcast <event> [params...]"
             )
 
         event_name = args.positional[0]

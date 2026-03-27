@@ -41,7 +41,11 @@ class NodesCommand(BaseCommand):
         try:
             nodes = []
             # MoleculerPy 0.14.35+ uses nodeID as primary attribute
-            local_node_id = getattr(broker, "nodeID", None) or getattr(broker, "node_id", None) or getattr(broker, "id", None)
+            local_node_id = (
+                getattr(broker, "nodeID", None)
+                or getattr(broker, "node_id", None)
+                or getattr(broker, "id", None)
+            )
 
             # Get current CPU usage
             current_cpu = psutil.cpu_percent(interval=0.1)
@@ -50,17 +54,19 @@ class NodesCommand(BaseCommand):
             if hasattr(broker, "node_catalog") and hasattr(broker.node_catalog, "nodes"):
                 for node_id, node in broker.node_catalog.nodes.items():
                     is_local = node_id == local_node_id
-                    nodes.append({
-                        "id": node_id,
-                        "available": getattr(node, "available", True),
-                        "local": is_local,
-                        "cpu": current_cpu if is_local else getattr(node, "cpu", None),
-                        "ipList": getattr(node, "ipList", []),
-                        "hostname": getattr(node, "hostname", None),
-                        "client": getattr(node, "client", {}),
-                        "services": getattr(node, "services", []),
-                        "serviceCount": len(getattr(node, "services", [])),
-                    })
+                    nodes.append(
+                        {
+                            "id": node_id,
+                            "available": getattr(node, "available", True),
+                            "local": is_local,
+                            "cpu": current_cpu if is_local else getattr(node, "cpu", None),
+                            "ipList": getattr(node, "ipList", []),
+                            "hostname": getattr(node, "hostname", None),
+                            "client": getattr(node, "client", {}),
+                            "services": getattr(node, "services", []),
+                            "serviceCount": len(getattr(node, "services", [])),
+                        }
+                    )
             # Moleculer.js pattern: registry.get_node_list()
             elif hasattr(broker, "registry") and hasattr(broker.registry, "get_node_list"):
                 registry_nodes = broker.registry.get_node_list()
@@ -72,26 +78,25 @@ class NodesCommand(BaseCommand):
             # Fallback: just show local node
             else:
                 hostname = os.uname().nodename if hasattr(os, "uname") else "localhost"
-                nodes = [{
-                    "id": local_node_id or "local",
-                    "available": True,
-                    "local": True,
-                    "hostname": hostname,
-                    "cpu": current_cpu,
-                    "serviceCount": len(getattr(broker, "services", {})),
-                    "ipList": self._get_local_ips(),
-                    "client": {"version": getattr(broker, "__version__", "0.1.0")},
-                }]
+                nodes = [
+                    {
+                        "id": local_node_id or "local",
+                        "available": True,
+                        "local": True,
+                        "hostname": hostname,
+                        "cpu": current_cpu,
+                        "serviceCount": len(getattr(broker, "services", {})),
+                        "ipList": self._get_local_ips(),
+                        "client": {"version": getattr(broker, "__version__", "0.1.0")},
+                    }
+                ]
 
             # Filter unavailable nodes
             if not show_all:
                 nodes = [n for n in nodes if n.get("available", True)]
 
             if not nodes:
-                return CommandResult(
-                    success=True,
-                    output="No nodes available."
-                )
+                return CommandResult(success=True, output="No nodes available.")
 
             # Use OutputFormatter for beautiful output
             formatter = OutputFormatter(use_colors=True, capture=True)

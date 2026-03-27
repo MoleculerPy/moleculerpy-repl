@@ -43,29 +43,17 @@ class ServicesCommand(BaseCommand):
         try:
             services = []
             # MoleculerPy 0.14.35+ uses nodeID as primary attribute
-            local_node_id = getattr(broker, "nodeID", None) or getattr(broker, "node_id", None) or getattr(broker, "id", None)
+            local_node_id = (
+                getattr(broker, "nodeID", None)
+                or getattr(broker, "node_id", None)
+                or getattr(broker, "id", None)
+            )
 
             # MoleculerPy pattern: broker.registry.__services__
             if hasattr(broker, "registry") and hasattr(broker.registry, "__services__"):
                 for name, service in broker.registry.__services__.items():
-                    services.append({
-                        "name": name,
-                        "version": getattr(service, "version", None) or "-",
-                        "fullName": getattr(service, "full_name", name),
-                        "nodeIds": [local_node_id] if local_node_id else [],
-                        "local": True,
-                        "available": True,
-                        "actions": getattr(service, "actions", {}),
-                        "events": getattr(service, "events", {}),
-                    })
-            # Moleculer.js pattern: registry.get_service_list()
-            elif hasattr(broker, "registry") and hasattr(broker.registry, "get_service_list"):
-                services = broker.registry.get_service_list()
-            # Fallback: get from broker.services dict (mock broker)
-            else:
-                if hasattr(broker, "services"):
-                    for name, service in broker.services.items():
-                        services.append({
+                    services.append(
+                        {
                             "name": name,
                             "version": getattr(service, "version", None) or "-",
                             "fullName": getattr(service, "full_name", name),
@@ -74,7 +62,27 @@ class ServicesCommand(BaseCommand):
                             "available": True,
                             "actions": getattr(service, "actions", {}),
                             "events": getattr(service, "events", {}),
-                        })
+                        }
+                    )
+            # Moleculer.js pattern: registry.get_service_list()
+            elif hasattr(broker, "registry") and hasattr(broker.registry, "get_service_list"):
+                services = broker.registry.get_service_list()
+            # Fallback: get from broker.services dict (mock broker)
+            else:
+                if hasattr(broker, "services"):
+                    for name, service in broker.services.items():
+                        services.append(
+                            {
+                                "name": name,
+                                "version": getattr(service, "version", None) or "-",
+                                "fullName": getattr(service, "full_name", name),
+                                "nodeIds": [local_node_id] if local_node_id else [],
+                                "local": True,
+                                "available": True,
+                                "actions": getattr(service, "actions", {}),
+                                "events": getattr(service, "events", {}),
+                            }
+                        )
 
             # Filter internal services (starting with $)
             if skip_internal and not show_all:
@@ -85,10 +93,7 @@ class ServicesCommand(BaseCommand):
                 services = [s for s in services if s.get("local", False)]
 
             if not services:
-                return CommandResult(
-                    success=True,
-                    output="No services registered."
-                )
+                return CommandResult(success=True, output="No services registered.")
 
             # Use OutputFormatter for beautiful output
             formatter = OutputFormatter(use_colors=True, capture=True)

@@ -57,19 +57,11 @@ class MockBroker:
 
     async def emit(self, event: str, payload: dict | None = None, **kwargs: Any) -> None:
         """Mock event emit."""
-        self._emitted_events.append({
-            "event": event,
-            "payload": payload,
-            "kwargs": kwargs
-        })
+        self._emitted_events.append({"event": event, "payload": payload, "kwargs": kwargs})
 
     async def broadcast(self, event: str, payload: dict | None = None, **kwargs: Any) -> None:
         """Mock broadcast."""
-        self._broadcast_events.append({
-            "event": event,
-            "payload": payload,
-            "kwargs": kwargs
-        })
+        self._broadcast_events.append({"event": event, "payload": payload, "kwargs": kwargs})
 
 
 @pytest.fixture
@@ -101,6 +93,7 @@ def mock_broker() -> MockBroker:
 def parser():
     """Provide parser instance."""
     from moleculerpy_repl.parser import ArgParser
+
     return ArgParser()
 
 
@@ -108,6 +101,7 @@ def parser():
 def output_formatter():
     """Provide output formatter (no colors for testing)."""
     from moleculerpy_repl.output import OutputFormatter
+
     return OutputFormatter(use_colors=False)
 
 
@@ -115,4 +109,5 @@ def output_formatter():
 def command_registry():
     """Provide command registry with all commands."""
     from moleculerpy_repl.commands import create_default_registry
+
     return create_default_registry()

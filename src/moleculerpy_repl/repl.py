@@ -122,17 +122,13 @@ class REPL(cmd.Cmd):
         for cmd_class in get_builtin_commands():
             self.registry.register(cmd_class())
 
-    def _register_custom_commands(
-        self, custom_commands: list[type[BaseCommand]]
-    ) -> None:
+    def _register_custom_commands(self, custom_commands: list[type[BaseCommand]]) -> None:
         """Register custom commands."""
         for cmd_class in custom_commands:
             try:
                 cmd_instance = cmd_class()
                 if self.registry.get(cmd_instance.name):
-                    self.output.warning(
-                        f"Command '{cmd_instance.name}' already exists. Skipping."
-                    )
+                    self.output.warning(f"Command '{cmd_instance.name}' already exists. Skipping.")
                     continue
                 self.registry.register(cmd_instance)
             except Exception as e:
@@ -183,9 +179,7 @@ class REPL(cmd.Cmd):
         if command:
             return cast(None, self._execute_command(command, args_str))
 
-        self.output.error(
-            f"Unknown command: '{cmd_name}'. Type 'help' for available commands."
-        )
+        self.output.error(f"Unknown command: '{cmd_name}'. Type 'help' for available commands.")
         return
 
     def _execute_command(self, command: BaseCommand, args_str: str) -> bool | None:
@@ -227,17 +221,13 @@ class REPL(cmd.Cmd):
         """Handle empty line (just Enter)."""
         return False  # Don't repeat last command
 
-    def completedefault(
-        self, text: str, line: str, begidx: int, endidx: int
-    ) -> list[str]:
+    def completedefault(self, text: str, line: str, begidx: int, endidx: int) -> list[str]:
         """Default tab completion."""
         parts = line[:begidx].split()
 
         if not parts:
             # Complete command names
-            return [
-                name for name in self.registry.names() if name.startswith(text)
-            ]
+            return [name for name in self.registry.names() if name.startswith(text)]
 
         # Get command-specific completions
         cmd_name = parts[0]
@@ -261,9 +251,7 @@ class REPL(cmd.Cmd):
             self.output.banner("MoleculerPy REPL Commands")
 
             headers = ["Command", "Description"]
-            rows = [
-                [cmd.name, cmd.description] for cmd in self.registry.all()
-            ]
+            rows = [[cmd.name, cmd.description] for cmd in self.registry.all()]
             self.output.table(headers, rows)
 
     def do_quit(self, arg: str) -> bool:
@@ -313,6 +301,7 @@ class REPL(cmd.Cmd):
         # Enable REPL-aware logging output
         try:
             from .logger import REPLAwareStream
+
             REPLAwareStream.set_prompt(self.prompt)
             REPLAwareStream.enable()
         except ImportError:
@@ -330,6 +319,7 @@ class REPL(cmd.Cmd):
             # Disable REPL-aware logging
             try:
                 from .logger import REPLAwareStream
+
                 REPLAwareStream.disable()
             except ImportError:
                 pass

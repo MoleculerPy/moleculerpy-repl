@@ -72,6 +72,7 @@ class LogLevelCommand(BaseCommand):
                 elif hasattr(broker.logger, "setLevel"):
                     # Python logging compatibility
                     import logging
+
                     level_map = {
                         "trace": 5,
                         "debug": logging.DEBUG,

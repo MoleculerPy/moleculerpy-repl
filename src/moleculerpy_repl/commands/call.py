@@ -21,8 +21,7 @@ class CallCommand(BaseCommand):
         """Execute the call command."""
         if not args.positional:
             return CommandResult(
-                success=False,
-                error="Action name required. Usage: call <action> [params...]"
+                success=False, error="Action name required. Usage: call <action> [params...]"
             )
 
         action_name = args.positional[0]
@@ -46,10 +45,7 @@ class CallCommand(BaseCommand):
 
             # Call the action
             result = await broker.call(
-                action_name,
-                args.payload,
-                meta=args.meta if args.meta else None,
-                **call_opts
+                action_name, args.payload, meta=args.meta if args.meta else None, **call_opts
             )
 
             elapsed = (time.perf_counter() - start_time) * 1000  # ms

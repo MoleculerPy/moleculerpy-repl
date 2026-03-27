@@ -193,7 +193,7 @@ class TestLoadEnvFile:
             f.write("FOO=bar\n")
             f.write("BAZ=123\n")
             f.write("# Comment\n")
-            f.write("QUOTED=\"value with spaces\"\n")
+            f.write('QUOTED="value with spaces"\n')
             f.flush()
             filepath = f.name
 
@@ -228,6 +228,7 @@ class TestIsServiceClass:
 
             class MyService(Service):
                 name = "my-service"
+
                 def __init__(self) -> None:
                     super().__init__(self.name)
 
@@ -247,11 +248,13 @@ class TestIsServiceClass:
 
             class EventService(Service):
                 name = "event-service"
+
                 def __init__(self) -> None:
                     super().__init__(self.name)
 
             assert _is_service_class(EventService) is True
         except ImportError:
+
             class EventServiceFallback:  # type: ignore[no-redef]
                 name = "event-service"
                 events = {"user.created": lambda: None}
@@ -347,17 +350,24 @@ class TestRunCli:
         """Test parsing all flags together."""
         with patch.object(Runner, "run"):
             with patch.object(Runner, "__init__", return_value=None) as mock_init:
-                run_cli([
-                    "-i", "0",
-                    "--repl",
-                    "-e", ".env",
-                    "-T", "nats://localhost",
-                    "-n", "my-node",
-                    "-H",
-                    "-l", "DEBUG",
-                    "./services",
-                    "./other"
-                ])
+                run_cli(
+                    [
+                        "-i",
+                        "0",
+                        "--repl",
+                        "-e",
+                        ".env",
+                        "-T",
+                        "nats://localhost",
+                        "-n",
+                        "my-node",
+                        "-H",
+                        "-l",
+                        "DEBUG",
+                        "./services",
+                        "./other",
+                    ]
+                )
 
                 config = mock_init.call_args[0][0]
                 assert config.instances == 0

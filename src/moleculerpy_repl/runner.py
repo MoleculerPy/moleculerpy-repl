@@ -134,7 +134,9 @@ class WorkerManager:
                         is_production = os.environ.get("MOLECULERPY_ENV") == "production"
 
                         if is_production:
-                            print(f"[Master] Worker #{worker_id} crashed (code={exit_code}), restarting...")
+                            print(
+                                f"[Master] Worker #{worker_id} crashed (code={exit_code}), restarting..."
+                            )
                             self._spawn_worker(worker_id)
                         else:
                             print(f"[Master] Worker #{worker_id} exited (code={exit_code})")
@@ -194,11 +196,7 @@ class Runner:
         - If instances == 1: run directly
         """
         if self.config.instances > 1 or self.config.instances == 0:
-            num_workers = (
-                self.config.instances
-                if self.config.instances > 0
-                else mp.cpu_count()
-            )
+            num_workers = self.config.instances if self.config.instances > 0 else mp.cpu_count()
             manager = WorkerManager(num_workers, _worker_main, self.config)
             manager.start()
         else:
@@ -285,8 +283,7 @@ class Runner:
             return self._create_broker_from_mapping(config_data)
 
         raise ValueError(
-            f"Unsupported config file format: {config_file}. "
-            "Use .py, .json, .yaml, or .yml"
+            f"Unsupported config file format: {config_file}. Use .py, .json, .yaml, or .yml"
         )
 
     async def _create_broker_from_python_config(self, config_path: Path) -> Any:
@@ -298,13 +295,10 @@ class Runner:
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
 
-        factory = getattr(module, "create_broker", None) or getattr(
-            module, "broker_factory", None
-        )
+        factory = getattr(module, "create_broker", None) or getattr(module, "broker_factory", None)
         if not callable(factory):
             raise ValueError(
-                f"Python config {config_path} must define create_broker(...) "
-                "or broker_factory(...)"
+                f"Python config {config_path} must define create_broker(...) or broker_factory(...)"
             )
 
         kwargs: dict[str, Any] = {}
@@ -357,10 +351,7 @@ class Runner:
             print("Error: MoleculerPy is not installed. Install with: pip install moleculerpy")
             sys.exit(1)
 
-        broker_id = str(
-            merged.get("node_id")
-            or self._build_broker_config()["node_id"]
-        )
+        broker_id = str(merged.get("node_id") or self._build_broker_config()["node_id"])
         settings_kwargs = {
             "log_level": str(merged.get("log_level", self.config.log_level)),
         }
@@ -380,6 +371,7 @@ class Runner:
             base_id = self.config.node_id
         else:
             import socket
+
             base_id = socket.gethostname()
 
         if self.worker_id and self.worker_id > 1:
@@ -568,50 +560,58 @@ Examples:
     )
 
     parser.add_argument(
-        "-i", "--instances",
+        "-i",
+        "--instances",
         type=int,
         default=1,
         help="Number of worker instances (0 = auto-detect CPU count)",
     )
 
     parser.add_argument(
-        "-r", "--repl",
+        "-r",
+        "--repl",
         action="store_true",
         help="Start REPL (only on worker 1)",
     )
 
     parser.add_argument(
-        "-e", "--env",
+        "-e",
+        "--env",
         type=str,
         help="Path to .env file",
     )
 
     parser.add_argument(
-        "-c", "--config",
+        "-c",
+        "--config",
         type=str,
         help="Path to config file (JSON/YAML)",
     )
 
     parser.add_argument(
-        "-T", "--transporter",
+        "-T",
+        "--transporter",
         type=str,
         help="Transporter URL (e.g., redis://localhost)",
     )
 
     parser.add_argument(
-        "-n", "--node-id",
+        "-n",
+        "--node-id",
         type=str,
         help="Node ID prefix",
     )
 
     parser.add_argument(
-        "-H", "--hot-reload",
+        "-H",
+        "--hot-reload",
         action="store_true",
         help="Enable hot reload on file changes",
     )
 
     parser.add_argument(
-        "-l", "--log-level",
+        "-l",
+        "--log-level",
         type=str,
         default="INFO",
         choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],

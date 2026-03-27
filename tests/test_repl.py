@@ -27,11 +27,7 @@ class TestREPLConfig:
 
     def test_custom_values(self) -> None:
         """Test custom config values."""
-        config = REPLConfig(
-            delimiter="test> ",
-            history_size=500,
-            use_colors=False
-        )
+        config = REPLConfig(delimiter="test> ", history_size=500, use_colors=False)
         assert config.delimiter == "test> "
         assert config.history_size == 500
         assert config.use_colors is False
@@ -88,11 +84,7 @@ class TestREPLCustomCommands:
             async def execute(self, broker, args):
                 return CommandResult(success=True, data="test result")
 
-        repl = REPL(
-            mock_broker,
-            custom_commands=[TestCommand],
-            use_colors=False
-        )
+        repl = REPL(mock_broker, custom_commands=[TestCommand], use_colors=False)
 
         cmd = repl.registry.get("testcmd")
         assert cmd is not None
@@ -103,11 +95,7 @@ class TestREPLCustomCommands:
         from moleculerpy_repl.commands.call import CallCommand
 
         # CallCommand already exists as built-in
-        repl = REPL(
-            mock_broker,
-            custom_commands=[CallCommand],
-            use_colors=False
-        )
+        repl = REPL(mock_broker, custom_commands=[CallCommand], use_colors=False)
 
         # Should have printed a warning
         captured = capsys.readouterr()
@@ -289,11 +277,7 @@ class TestREPLErrorHandling:
             async def execute(self, broker, args):
                 return CommandResult(success=False, error="Intentional failure")
 
-        repl = REPL(
-            mock_broker,
-            custom_commands=[FailingCommand],
-            use_colors=False
-        )
+        repl = REPL(mock_broker, custom_commands=[FailingCommand], use_colors=False)
 
         repl.default("fail")
 
@@ -310,11 +294,7 @@ class TestREPLErrorHandling:
             async def execute(self, broker, args):
                 raise RuntimeError("Boom!")
 
-        repl = REPL(
-            mock_broker,
-            custom_commands=[CrashingCommand],
-            use_colors=False
-        )
+        repl = REPL(mock_broker, custom_commands=[CrashingCommand], use_colors=False)
 
         result = repl.default("crash")
 
@@ -337,11 +317,7 @@ class TestREPLExitSignal:
             async def execute(self, broker, args):
                 return CommandResult(success=True, data="__EXIT__")
 
-        repl = REPL(
-            mock_broker,
-            custom_commands=[ExitCommand],
-            use_colors=False
-        )
+        repl = REPL(mock_broker, custom_commands=[ExitCommand], use_colors=False)
 
         result = repl.default("myexit")
         assert result is True  # Signals exit

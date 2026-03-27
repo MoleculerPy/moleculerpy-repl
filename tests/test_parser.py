@@ -69,14 +69,12 @@ class TestArgParser:
 
     def test_json_merge(self, parser: ArgParser) -> None:
         """Test --json merges with existing payload."""
-        result = parser.parse('a=5 --json \'{"b": 10}\'')
+        result = parser.parse("a=5 --json '{\"b\": 10}'")
         assert result.payload == {"a": 5, "b": 10}
 
     def test_all_prefixes_combined(self, parser: ArgParser) -> None:
         """Test combining all prefix types."""
-        result = parser.parse(
-            "user.get id=123 #tenant=acme $timeout=5000 --verbose"
-        )
+        result = parser.parse("user.get id=123 #tenant=acme $timeout=5000 --verbose")
         assert result.positional == ["user.get"]
         assert result.payload == {"id": 123}
         assert result.meta == {"tenant": "acme"}
@@ -127,7 +125,7 @@ class TestValueConversion:
 
     def test_json_object_via_flag(self, parser: ArgParser) -> None:
         """Test JSON via --json flag."""
-        result = parser.parse('--json \'{"x": 1}\'')
+        result = parser.parse("--json '{\"x\": 1}'")
         assert result.payload == {"x": 1}
 
     def test_json_array_conversion(self, parser: ArgParser) -> None:
@@ -220,7 +218,7 @@ class TestParsedArgsDataclass:
             meta={"tenant": "test"},
             options={"timeout": 5000},
             flags={"verbose": True},
-            raw="action x=1"
+            raw="action x=1",
         )
         assert args.positional == ["action"]
         assert args.payload == {"x": 1}

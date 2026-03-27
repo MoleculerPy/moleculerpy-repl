@@ -36,6 +36,7 @@ except ImportError:
 # ANSI Color codes (fallback when rich is not available)
 class Colors:
     """ANSI escape codes for terminal colors."""
+
     RESET = "\033[0m"
     BOLD = "\033[1m"
     DIM = "\033[2m"
@@ -140,7 +141,9 @@ class OutputFormatter:
             self._string_io = StringIO()
             # No colors in capture mode with rich (for testing)
             # Wide width to prevent column truncation in tests
-            self._console = Console(file=self._string_io, force_terminal=False, no_color=True, width=200)
+            self._console = Console(
+                file=self._string_io, force_terminal=False, no_color=True, width=200
+            )
 
     def get_output(self) -> str:
         """Get captured output (when capture=True)."""
@@ -240,7 +243,9 @@ class OutputFormatter:
             if status_upper in ("OK", "ONLINE"):
                 return f"{Colors.BG_GREEN}{Colors.BLACK} {status_upper:^8} {Colors.RESET}"
             elif status_upper in ("FAILED", "OFFLINE", "ERROR"):
-                return f"{Colors.BG_RED}{Colors.WHITE}{Colors.BOLD} {status_upper:^8} {Colors.RESET}"
+                return (
+                    f"{Colors.BG_RED}{Colors.WHITE}{Colors.BOLD} {status_upper:^8} {Colors.RESET}"
+                )
             elif status_upper in ("TRYING", "PENDING"):
                 return f"{Colors.BG_YELLOW}{Colors.BLACK} {status_upper:^8} {Colors.RESET}"
             elif status_upper == "LOCAL":
@@ -337,7 +342,11 @@ class OutputFormatter:
                 for cell in row:
                     cell_str = str(cell)
                     # Parse rich markup in strings
-                    cells.append(Text.from_markup(cell_str) if "[" in cell_str and "]" in cell_str else cell_str)
+                    cells.append(
+                        Text.from_markup(cell_str)
+                        if "[" in cell_str and "]" in cell_str
+                        else cell_str
+                    )
                 table.add_row(*cells)
 
             if self._console is not None:
@@ -409,7 +418,8 @@ class OutputFormatter:
         def visible_len(s: str) -> int:
             """Get visible length ignoring ANSI codes."""
             import re
-            return len(re.sub(r'\033\[[0-9;]*m', '', str(s)))
+
+            return len(re.sub(r"\033\[[0-9;]*m", "", str(s)))
 
         str_rows = [[str(cell) for cell in row] for row in rows]
 
@@ -448,9 +458,7 @@ class OutputFormatter:
         self._output(gray(top))
 
         # Header
-        header_row = V + V.join(
-            f" {bold(pad(h, widths[i]))} " for i, h in enumerate(headers)
-        ) + V
+        header_row = V + V.join(f" {bold(pad(h, widths[i]))} " for i, h in enumerate(headers)) + V
         self._output(gray(V) + header_row[1:-1] + gray(V))
 
         # Header separator
@@ -459,9 +467,7 @@ class OutputFormatter:
 
         # Data rows
         for row in str_rows:
-            row_str = V + V.join(
-                f" {pad(cell, widths[i])} " for i, cell in enumerate(row)
-            ) + V
+            row_str = V + V.join(f" {pad(cell, widths[i])} " for i, cell in enumerate(row)) + V
             self._output(gray(V) + row_str[1:-1] + gray(V))
 
         # Bottom border
@@ -500,7 +506,7 @@ class OutputFormatter:
                 if ip_list:
                     ip = self._as_str(ip_list[0], "-")
                     if len(ip_list) > 1:
-                        ip += f" (+{len(ip_list)-1})"
+                        ip += f" (+{len(ip_list) - 1})"
                 else:
                     ip = self._as_str(node.get("hostname"), "-") or "-"
 
@@ -627,7 +633,11 @@ class OutputFormatter:
             if self.use_rich:
                 cached = "[green]Yes[/]" if cache else "[dim]No[/]"
             elif self.use_colors:
-                cached = f"{Colors.GREEN}Yes{Colors.RESET}" if cache else f"{Colors.GRAY}No{Colors.RESET}"
+                cached = (
+                    f"{Colors.GREEN}Yes{Colors.RESET}"
+                    if cache
+                    else f"{Colors.GRAY}No{Colors.RESET}"
+                )
             else:
                 cached = "Yes" if cache else "No"
 
@@ -637,7 +647,7 @@ class OutputFormatter:
                 param_names = list(params.keys())[:5]  # Limit to 5
                 params_str = ", ".join(param_names)
                 if len(params) > 5:
-                    params_str += f" (+{len(params)-5})"
+                    params_str += f" (+{len(params) - 5})"
                 # Truncate if too long
                 if len(params_str) > 25:
                     params_str = params_str[:22] + "..."
@@ -722,7 +732,7 @@ class OutputFormatter:
             elif isinstance(value, (int, float)):
                 val_str = f"[cyan]{value}[/]"
             elif isinstance(value, str):
-                val_str = f"[green]\"{value}\"[/]"
+                val_str = f'[green]"{value}"[/]'
             else:
                 val_str = str(value)
             if self._console is not None:
@@ -733,7 +743,7 @@ class OutputFormatter:
             elif isinstance(value, (int, float)):
                 val_str = f"{Colors.CYAN}{value}{Colors.RESET}"
             elif isinstance(value, str):
-                val_str = f"{Colors.GREEN}\"{value}\"{Colors.RESET}"
+                val_str = f'{Colors.GREEN}"{value}"{Colors.RESET}'
             else:
                 val_str = str(value)
             print(f"    {label:<{label_width}} : {val_str}")

@@ -21,11 +21,7 @@ class TestCallCommandExtended:
     async def test_call_with_retries_option(self, mock_broker) -> None:
         """Test call with $retries option."""
         cmd = CallCommand()
-        args = ParsedArgs(
-            positional=["math.add"],
-            payload={"a": 1, "b": 2},
-            options={"retries": 3}
-        )
+        args = ParsedArgs(positional=["math.add"], payload={"a": 1, "b": 2}, options={"retries": 3})
         result = await cmd.execute(mock_broker, args)
         assert result.success is True
 
@@ -62,11 +58,9 @@ class TestCallCommandExtended:
         cmd = CallCommand()
         broker = Mock()
         broker.registry = Mock()
-        broker.registry.get_action_list = Mock(return_value=[
-            {"name": "math.add"},
-            {"name": "math.sub"},
-            {"name": "user.get"}
-        ])
+        broker.registry.get_action_list = Mock(
+            return_value=[{"name": "math.add"}, {"name": "math.sub"}, {"name": "user.get"}]
+        )
 
         completions = cmd.get_completions(broker, "math", "call math")
         assert "math.add" in completions
@@ -103,10 +97,9 @@ class TestEmitCommandExtended:
         cmd = EmitCommand()
         broker = Mock()
         broker.registry = Mock()
-        broker.registry.get_event_list = Mock(return_value=[
-            {"name": "user.created"},
-            {"name": "order.placed"}
-        ])
+        broker.registry.get_event_list = Mock(
+            return_value=[{"name": "user.created"}, {"name": "order.placed"}]
+        )
 
         completions = cmd.get_completions(broker, "user", "emit user")
         assert "user.created" in completions
@@ -115,9 +108,7 @@ class TestEmitCommandExtended:
         """Test event completions from services."""
         cmd = EmitCommand()
         broker = Mock(spec=[])
-        broker.services = {
-            "user": Mock(events={"created": None, "deleted": None})
-        }
+        broker.services = {"user": Mock(events={"created": None, "deleted": None})}
 
         completions = cmd.get_completions(broker, "cr", "emit cr")
         assert "created" in completions
@@ -140,7 +131,7 @@ class TestBroadcastCommandExtended:
     async def test_broadcast_fallback_to_emit(self) -> None:
         """Test broadcast falls back to emit if no broadcast method."""
         cmd = BroadcastCommand()
-        broker = Mock(spec=['emit'])
+        broker = Mock(spec=["emit"])
         broker.emit = AsyncMock()
 
         args = ParsedArgs(positional=["cache.clear"], payload={"all": True})
@@ -229,7 +220,9 @@ class TestActionsCommandExtended:
         cmd = ActionsCommand()
         broker = Mock()
         broker.registry = Mock()
-        type(broker.registry).__actions__ = property(lambda s: (_ for _ in ()).throw(RuntimeError()))
+        type(broker.registry).__actions__ = property(
+            lambda s: (_ for _ in ()).throw(RuntimeError())
+        )
 
         args = ParsedArgs()
         result = await cmd.execute(broker, args)
@@ -264,10 +257,8 @@ class TestServicesCommandExtended:
     async def test_services_local_flag(self) -> None:
         """Test services with -l flag shows only local."""
         cmd = ServicesCommand()
-        broker = Mock(spec=['services'])
-        broker.services = {
-            "local": Mock(name="local", version=None, full_name="local")
-        }
+        broker = Mock(spec=["services"])
+        broker.services = {"local": Mock(name="local", version=None, full_name="local")}
         broker.node_id = "node-1"
 
         args = ParsedArgs(flags={"l": True})
@@ -293,7 +284,9 @@ class TestServicesCommandExtended:
         cmd = ServicesCommand()
         broker = Mock()
         broker.registry = Mock()
-        type(broker.registry).__services__ = property(lambda s: (_ for _ in ()).throw(RuntimeError()))
+        type(broker.registry).__services__ = property(
+            lambda s: (_ for _ in ()).throw(RuntimeError())
+        )
 
         args = ParsedArgs()
         result = await cmd.execute(broker, args)

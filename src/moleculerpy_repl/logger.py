@@ -35,6 +35,7 @@ __all__ = [
 
 class LogLevel(Enum):
     """Log levels with priorities."""
+
     TRACE = 0
     DEBUG = 1
     INFO = 2
@@ -45,14 +46,16 @@ class LogLevel(Enum):
 
 class LogFormat(Enum):
     """Log output formats."""
-    FULL = "full"      # [2024-01-29T10:15:22.450Z] INFO  node/BROKER: Message
-    SHORT = "short"    # [10:15:22.450Z] INFO  BROKER: Message
+
+    FULL = "full"  # [2024-01-29T10:15:22.450Z] INFO  node/BROKER: Message
+    SHORT = "short"  # [10:15:22.450Z] INFO  BROKER: Message
     SIMPLE = "simple"  # INFO  - Message
 
 
 # ANSI color codes
 class Colors:
     """ANSI escape codes for colors."""
+
     RESET = "\033[0m"
     BOLD = "\033[1m"
     DIM = "\033[2m"
@@ -131,7 +134,7 @@ class REPLAwareStream:
 
     # ANSI escape codes
     CLEAR_LINE = "\033[2K"  # Clear entire line
-    CURSOR_START = "\r"     # Move cursor to start of line
+    CURSOR_START = "\r"  # Move cursor to start of line
 
     # Global state
     _prompt: str = ""
@@ -215,11 +218,11 @@ def humanize_duration(milliseconds: float | None) -> str:
         return "0ms"
 
     units = [
-        (3600000, "h"),   # hours
-        (60000, "m"),     # minutes
-        (1000, "s"),      # seconds
-        (1, "ms"),        # milliseconds
-        (0.001, "μs"),    # microseconds
+        (3600000, "h"),  # hours
+        (60000, "m"),  # minutes
+        (1000, "s"),  # seconds
+        (1, "ms"),  # milliseconds
+        (0.001, "μs"),  # microseconds
     ]
 
     for divisor, unit in units:
@@ -289,10 +292,7 @@ class Logger:
     def _setup_colors(self) -> None:
         """Pre-compute colored level and module strings."""
         if not self.config.colors:
-            self._level_strings = {
-                level: level.name.ljust(5)
-                for level in LogLevel
-            }
+            self._level_strings = {level: level.name.ljust(5) for level in LogLevel}
             self._module_color = ""
             self._reset = ""
             self._gray = ""
@@ -303,8 +303,7 @@ class Logger:
 
         # Level strings with colors
         self._level_strings = {
-            level: f"{LEVEL_COLORS[level]}{level.name.ljust(5)}{Colors.RESET}"
-            for level in LogLevel
+            level: f"{LEVEL_COLORS[level]}{level.name.ljust(5)}{Colors.RESET}" for level in LogLevel
         }
 
         # Module color
@@ -477,9 +476,19 @@ def print_banner(version: str = "0.1.0", node_id: str = "") -> None:
     width = 41
 
     print(f"{Colors.CYAN}╔{'═' * (width - 2)}╗{Colors.RESET}")
-    print(f"{Colors.CYAN}║{Colors.RESET}   {SYMBOLS['rocket']} {Colors.BOLD}MoleculerPy Runner{Colors.RESET} v{version}".ljust(width + 15) + f"{Colors.CYAN}║{Colors.RESET}")
+    print(
+        f"{Colors.CYAN}║{Colors.RESET}   {SYMBOLS['rocket']} {Colors.BOLD}MoleculerPy Runner{Colors.RESET} v{version}".ljust(
+            width + 15
+        )
+        + f"{Colors.CYAN}║{Colors.RESET}"
+    )
     if node_id:
-        print(f"{Colors.CYAN}║{Colors.RESET}   Node ID: {Colors.YELLOW}{node_id}{Colors.RESET}".ljust(width + 20) + f"{Colors.CYAN}║{Colors.RESET}")
+        print(
+            f"{Colors.CYAN}║{Colors.RESET}   Node ID: {Colors.YELLOW}{node_id}{Colors.RESET}".ljust(
+                width + 20
+            )
+            + f"{Colors.CYAN}║{Colors.RESET}"
+        )
     print(f"{Colors.CYAN}╚{'═' * (width - 2)}╝{Colors.RESET}")
     print()
 
@@ -519,7 +528,9 @@ if __name__ == "__main__":
     broker.info("Registered 3 middleware(s).")
 
     duration_ms = (time.time() - start) * 1000
-    broker.success(f"ServiceBroker with 3 service(s) started successfully in {humanize_duration(duration_ms)}")
+    broker.success(
+        f"ServiceBroker with 3 service(s) started successfully in {humanize_duration(duration_ms)}"
+    )
 
     print()
     broker.warn("This is a warning message")

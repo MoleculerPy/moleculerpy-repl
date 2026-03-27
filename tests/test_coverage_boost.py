@@ -72,10 +72,7 @@ class TestDirectCallEdgeCases:
         broker.call = AsyncMock(return_value=42)
         broker.registry = Mock(spec=[])
 
-        args = ParsedArgs(
-            positional=["node-1", "math.add"],
-            payload={"a": 1, "b": 2}
-        )
+        args = ParsedArgs(positional=["node-1", "math.add"], payload={"a": 1, "b": 2})
         result = await cmd.execute(broker, args)
         assert result.success is True
 
@@ -88,10 +85,7 @@ class TestDirectCallEdgeCases:
         broker.node_catalog.nodes = {"node-1": Mock()}
         broker.registry = Mock(spec=[])
 
-        args = ParsedArgs(
-            positional=["unknown-node", "math.add"],
-            payload={}
-        )
+        args = ParsedArgs(positional=["unknown-node", "math.add"], payload={})
         result = await cmd.execute(broker, args)
         assert result.success is False
         assert "not found" in result.error
@@ -105,10 +99,7 @@ class TestDirectCallEdgeCases:
         broker.registry.get_node = Mock(return_value=Mock())
         broker.call = AsyncMock(return_value=100)
 
-        args = ParsedArgs(
-            positional=["node-x", "action"],
-            payload={}
-        )
+        args = ParsedArgs(positional=["node-x", "action"], payload={})
         result = await cmd.execute(broker, args)
         assert result.success is True
 
@@ -117,14 +108,11 @@ class TestDirectCallEdgeCases:
         """Test dcall uses registry.nodes dict."""
         cmd = DirectCallCommand()
         broker = Mock()
-        broker.registry = Mock(spec=['nodes'])
+        broker.registry = Mock(spec=["nodes"])
         broker.registry.nodes = {"node-y": Mock()}
         broker.call = AsyncMock(return_value=200)
 
-        args = ParsedArgs(
-            positional=["node-y", "action"],
-            payload={}
-        )
+        args = ParsedArgs(positional=["node-y", "action"], payload={})
         result = await cmd.execute(broker, args)
         assert result.success is True
 
@@ -143,11 +131,11 @@ class TestDirectCallEdgeCases:
     def test_dcall_node_completions_from_registry_list(self) -> None:
         """Test node completions from registry.get_node_list."""
         cmd = DirectCallCommand()
-        broker = Mock(spec=['registry'])
+        broker = Mock(spec=["registry"])
         broker.registry = Mock()
-        broker.registry.get_node_list = Mock(return_value=[
-            {"id": "n1"}, {"id": "n2"}, {"id": "n3"}
-        ])
+        broker.registry.get_node_list = Mock(
+            return_value=[{"id": "n1"}, {"id": "n2"}, {"id": "n3"}]
+        )
 
         completions = cmd._get_node_completions(broker, "n")
         assert "n1" in completions
@@ -156,8 +144,8 @@ class TestDirectCallEdgeCases:
     def test_dcall_node_completions_from_registry_nodes(self) -> None:
         """Test node completions from registry.nodes dict."""
         cmd = DirectCallCommand()
-        broker = Mock(spec=['registry'])
-        broker.registry = Mock(spec=['nodes'])
+        broker = Mock(spec=["registry"])
+        broker.registry = Mock(spec=["nodes"])
         broker.registry.nodes = {"alpha": Mock(), "beta": Mock()}
 
         completions = cmd._get_node_completions(broker, "a")
@@ -228,12 +216,14 @@ class TestNodesCommandEdgeCases:
     async def test_nodes_from_registry_get_node_list(self) -> None:
         """Test nodes from registry.get_node_list method."""
         cmd = NodesCommand()
-        broker = Mock(spec=['registry'])
+        broker = Mock(spec=["registry"])
         broker.registry = Mock()
-        broker.registry.get_node_list = Mock(return_value=[
-            {"id": "n1", "available": True, "local": False},
-            {"id": "n2", "available": False, "local": False}
-        ])
+        broker.registry.get_node_list = Mock(
+            return_value=[
+                {"id": "n1", "available": True, "local": False},
+                {"id": "n2", "available": False, "local": False},
+            ]
+        )
 
         args = ParsedArgs()
         result = await cmd.execute(broker, args)
@@ -246,7 +236,7 @@ class TestNodesCommandEdgeCases:
     async def test_nodes_fallback_to_local(self) -> None:
         """Test nodes fallback when no node info available."""
         cmd = NodesCommand()
-        broker = Mock(spec=['node_id'])
+        broker = Mock(spec=["node_id"])
         broker.node_id = "local-node"
 
         args = ParsedArgs()
@@ -263,12 +253,14 @@ class TestActionsCommandEdgeCases:
     async def test_actions_from_moleculer_registry(self) -> None:
         """Test actions from Moleculer-style registry."""
         cmd = ActionsCommand()
-        broker = Mock(spec=['registry'])
+        broker = Mock(spec=["registry"])
         broker.registry = Mock()
-        broker.registry.get_action_list = Mock(return_value=[
-            {"name": "math.add", "nodeCount": 2, "available": True},
-            {"name": "user.get", "nodeCount": 1, "available": True}
-        ])
+        broker.registry.get_action_list = Mock(
+            return_value=[
+                {"name": "math.add", "nodeCount": 2, "available": True},
+                {"name": "user.get", "nodeCount": 1, "available": True},
+            ]
+        )
 
         args = ParsedArgs()
         result = await cmd.execute(broker, args)
@@ -290,12 +282,14 @@ class TestServicesCommandEdgeCases:
     async def test_services_from_moleculer_registry(self) -> None:
         """Test services from Moleculer-style registry."""
         cmd = ServicesCommand()
-        broker = Mock(spec=['registry'])
+        broker = Mock(spec=["registry"])
         broker.registry = Mock()
-        broker.registry.get_service_list = Mock(return_value=[
-            {"name": "math", "version": "1", "available": True, "nodeCount": 2},
-            {"name": "user", "version": "2", "available": True, "nodeCount": 1}
-        ])
+        broker.registry.get_service_list = Mock(
+            return_value=[
+                {"name": "math", "version": "1", "available": True, "nodeCount": 2},
+                {"name": "user", "version": "2", "available": True, "nodeCount": 1},
+            ]
+        )
 
         args = ParsedArgs()
         result = await cmd.execute(broker, args)
@@ -318,12 +312,14 @@ class TestEventsCommandEdgeCases:
     async def test_events_from_moleculer_registry(self) -> None:
         """Test events from Moleculer-style registry."""
         cmd = EventsCommand()
-        broker = Mock(spec=['registry'])
+        broker = Mock(spec=["registry"])
         broker.registry = Mock()
-        broker.registry.get_event_list = Mock(return_value=[
-            {"name": "user.created", "group": "user", "nodeCount": 1},
-            {"name": "order.placed", "group": "order", "nodeCount": 2}
-        ])
+        broker.registry.get_event_list = Mock(
+            return_value=[
+                {"name": "user.created", "group": "user", "nodeCount": 1},
+                {"name": "order.placed", "group": "order", "nodeCount": 2},
+            ]
+        )
 
         args = ParsedArgs()
         result = await cmd.execute(broker, args)

@@ -40,18 +40,24 @@ class ActionsCommand(BaseCommand):
         try:
             actions = []
             # MoleculerPy 0.14.35+ uses nodeID as primary attribute
-            local_node_id = getattr(broker, "nodeID", None) or getattr(broker, "node_id", None) or getattr(broker, "id", None)
+            local_node_id = (
+                getattr(broker, "nodeID", None)
+                or getattr(broker, "node_id", None)
+                or getattr(broker, "id", None)
+            )
 
             # MoleculerPy pattern: broker.registry.__actions__
             if hasattr(broker, "registry") and hasattr(broker.registry, "__actions__"):
                 for action in broker.registry.__actions__:
-                    actions.append({
-                        "name": getattr(action, "name", "unknown"),
-                        "nodeIds": [local_node_id] if local_node_id else [],
-                        "available": True,
-                        "cache": getattr(action, "cache", False),
-                        "params": getattr(action, "params", {}),
-                    })
+                    actions.append(
+                        {
+                            "name": getattr(action, "name", "unknown"),
+                            "nodeIds": [local_node_id] if local_node_id else [],
+                            "available": True,
+                            "cache": getattr(action, "cache", False),
+                            "params": getattr(action, "params", {}),
+                        }
+                    )
             # Moleculer.js pattern: registry.get_action_list()
             elif hasattr(broker, "registry") and hasattr(broker.registry, "get_action_list"):
                 actions = broker.registry.get_action_list()
@@ -65,6 +71,7 @@ class ActionsCommand(BaseCommand):
                                 params = {}
                                 if callable(action):
                                     import inspect
+
                                     try:
                                         sig = inspect.signature(action)
                                         params = {
@@ -75,14 +82,16 @@ class ActionsCommand(BaseCommand):
                                     except (ValueError, TypeError):
                                         pass
 
-                                actions.append({
-                                    "name": f"{service.name}.{action_name}",
-                                    "service": service.name,
-                                    "nodeIds": [local_node_id] if local_node_id else [],
-                                    "available": True,
-                                    "cache": False,
-                                    "params": params,
-                                })
+                                actions.append(
+                                    {
+                                        "name": f"{service.name}.{action_name}",
+                                        "service": service.name,
+                                        "nodeIds": [local_node_id] if local_node_id else [],
+                                        "available": True,
+                                        "cache": False,
+                                        "params": params,
+                                    }
+                                )
 
             # Filter internal actions
             if skip_internal and not show_all:
@@ -96,10 +105,7 @@ class ActionsCommand(BaseCommand):
                 ]
 
             if not actions:
-                return CommandResult(
-                    success=True,
-                    output="No actions available."
-                )
+                return CommandResult(success=True, output="No actions available.")
 
             # Use OutputFormatter for beautiful output
             formatter = OutputFormatter(use_colors=True, capture=True)

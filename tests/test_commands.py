@@ -102,11 +102,7 @@ class TestCallCommand:
     async def test_call_with_meta(self, mock_broker) -> None:
         """Test call with meta data."""
         cmd = CallCommand()
-        args = ParsedArgs(
-            positional=["user.get"],
-            payload={"id": "u1"},
-            meta={"tenant": "acme"}
-        )
+        args = ParsedArgs(positional=["user.get"], payload={"id": "u1"}, meta={"tenant": "acme"})
 
         result = await cmd.execute(mock_broker, args)
 
@@ -128,9 +124,7 @@ class TestCallCommand:
         """Test call with $timeout option."""
         cmd = CallCommand()
         args = ParsedArgs(
-            positional=["math.add"],
-            payload={"a": 1, "b": 2},
-            options={"timeout": 5000}
+            positional=["math.add"], payload={"a": 1, "b": 2}, options={"timeout": 5000}
         )
 
         result = await cmd.execute(mock_broker, args)
@@ -188,9 +182,7 @@ class TestDirectCallCommand:
         """Test dcall with meta data."""
         cmd = DirectCallCommand()
         args = ParsedArgs(
-            positional=["test-node-001", "user.get"],
-            payload={"id": "u1"},
-            meta={"tenant": "acme"}
+            positional=["test-node-001", "user.get"], payload={"id": "u1"}, meta={"tenant": "acme"}
         )
 
         result = await cmd.execute(mock_broker, args)
@@ -212,7 +204,7 @@ class TestDirectCallCommand:
         args = ParsedArgs(
             positional=["test-node-001", "math.add"],
             payload={"a": 1, "b": 2},
-            options={"timeout": 5000, "retries": 3}
+            options={"timeout": 5000, "retries": 3},
         )
 
         result = await cmd.execute(mock_broker, args)
@@ -222,6 +214,7 @@ class TestDirectCallCommand:
     async def test_dcall_exception(self, mock_broker) -> None:
         """Test dcall handles exceptions."""
         from unittest.mock import AsyncMock
+
         cmd = DirectCallCommand()
         args = ParsedArgs(positional=["test-node-001", "failing.action"], payload={})
 
@@ -235,6 +228,7 @@ class TestDirectCallCommand:
     async def test_dcall_exception_with_message_attr(self, mock_broker) -> None:
         """Test dcall exception with message attribute."""
         from unittest.mock import AsyncMock
+
         cmd = DirectCallCommand()
         args = ParsedArgs(positional=["test-node-001", "failing.action"], payload={})
 
@@ -282,9 +276,7 @@ class TestEmitCommand:
         """Test emit with meta data."""
         cmd = EmitCommand()
         args = ParsedArgs(
-            positional=["order.placed"],
-            payload={"order_id": "o1"},
-            meta={"source": "api"}
+            positional=["order.placed"], payload={"order_id": "o1"}, meta={"source": "api"}
         )
 
         result = await cmd.execute(mock_broker, args)

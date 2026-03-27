@@ -14,7 +14,7 @@ class TestLoadFlag:
 
     def test_load_from_file(self, parser: ArgParser) -> None:
         """Test loading params from JSON file."""
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
             json.dump({"name": "test", "value": 42}, f)
             f.flush()
             filepath = f.name
@@ -33,7 +33,7 @@ class TestLoadFlag:
 
     def test_load_invalid_json_file(self, parser: ArgParser) -> None:
         """Test loading invalid JSON file."""
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
             f.write("not valid json {{{")
             f.flush()
             filepath = f.name
@@ -47,7 +47,7 @@ class TestLoadFlag:
 
     def test_load_with_other_params(self, parser: ArgParser) -> None:
         """Test --load merges with other params."""
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
             json.dump({"from_file": True}, f)
             f.flush()
             filepath = f.name
@@ -105,7 +105,7 @@ class TestValueConversionEdgeCases:
 
     def test_empty_json_object(self, parser: ArgParser) -> None:
         """Test empty JSON object."""
-        result = parser.parse('data={}')
+        result = parser.parse("data={}")
         assert result.payload["data"] == {}
 
 

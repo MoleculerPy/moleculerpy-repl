@@ -80,7 +80,9 @@ class InfoCommand(BaseCommand):
                         event_count += len(service_events)
 
             # System info
-            python_version = f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
+            python_version = (
+                f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
+            )
             os_info = f"{platform.system()} {platform.release()}"
             hostname = platform.node()
 
@@ -115,6 +117,7 @@ class InfoCommand(BaseCommand):
             # Add uptime if available
             if hasattr(broker, "started_at") and broker.started_at is not None:
                 import time
+
                 uptime = time.time() - broker.started_at
                 lines.append(f"  Uptime:          {_format_uptime(uptime)}")
 
@@ -130,6 +133,7 @@ class InfoCommand(BaseCommand):
 def _get_pid() -> int:
     """Get current process ID."""
     import os
+
     return os.getpid()
 
 

@@ -41,7 +41,11 @@ class EventsCommand(BaseCommand):
         try:
             events = []
             # MoleculerPy 0.14.35+ uses nodeID as primary attribute
-            local_node_id = getattr(broker, "nodeID", None) or getattr(broker, "node_id", None) or getattr(broker, "id", None)
+            local_node_id = (
+                getattr(broker, "nodeID", None)
+                or getattr(broker, "node_id", None)
+                or getattr(broker, "id", None)
+            )
 
             # Get events from registry
             if hasattr(broker, "registry") and hasattr(broker.registry, "get_event_list"):
@@ -54,14 +58,16 @@ class EventsCommand(BaseCommand):
                     for service in broker.services.values():
                         if hasattr(service, "events"):
                             for event_name in service.events:
-                                events.append({
-                                    "name": event_name,
-                                    "group": service.name,
-                                    "service": service.name,
-                                    "nodeIds": [local_node_id] if local_node_id else [],
-                                    "local": True,
-                                    "available": True,
-                                })
+                                events.append(
+                                    {
+                                        "name": event_name,
+                                        "group": service.name,
+                                        "service": service.name,
+                                        "nodeIds": [local_node_id] if local_node_id else [],
+                                        "local": True,
+                                        "available": True,
+                                    }
+                                )
 
             # Filter internal events (starting with $)
             if skip_internal and not show_all:
@@ -72,10 +78,7 @@ class EventsCommand(BaseCommand):
                 events = [e for e in events if e.get("local", False)]
 
             if not events:
-                return CommandResult(
-                    success=True,
-                    output="No events registered."
-                )
+                return CommandResult(success=True, output="No events registered.")
 
             # Use OutputFormatter for beautiful output
             formatter = OutputFormatter(use_colors=True, capture=True)
