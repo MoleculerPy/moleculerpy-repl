@@ -24,7 +24,6 @@ OutputRecord = Mapping[str, Any]
 try:
     from rich.console import Console
     from rich.json import JSON
-    from rich.style import Style
     from rich.table import Table
     from rich.text import Text
 

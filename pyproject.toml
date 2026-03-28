@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "moleculerpy-repl"
-version = "0.14.2"
+version = "0.14.3"
 description = "Interactive CLI shell for MoleculerPy microservices framework"
 readme = "README.md"
 license = "MIT"
@@ -88,7 +88,7 @@ warn_return_any = true
 warn_unused_configs = true
 
 [[tool.mypy.overrides]]
-module = ["psutil.*", "yaml.*", "moleculerpy.*"]
+module = ["psutil.*", "yaml.*"]
 ignore_missing_imports = true
 
 [tool.ruff]
