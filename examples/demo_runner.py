@@ -17,6 +17,7 @@ Usage:
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import signal
 import sys
 import time
@@ -72,7 +73,8 @@ class MockBroker:
         self._heartbeat_task = None
 
         # Initialize logger factory for Moleculer-style logging
-        from moleculerpy_repl.logger import LoggerFactory, LogLevel, LogFormat
+        from moleculerpy_repl.logger import LogFormat, LoggerFactory, LogLevel
+
         self.logger_factory = LoggerFactory(
             node_id=node_id,
             level=LogLevel.INFO,
@@ -100,6 +102,7 @@ class MockBroker:
     async def _heartbeat_loop(self) -> None:
         """Background heartbeat loop."""
         import psutil
+
         while True:
             try:
                 await asyncio.sleep(self.heartbeat_interval)
@@ -115,10 +118,8 @@ class MockBroker:
         # Stop heartbeat task
         if self._heartbeat_task:
             self._heartbeat_task.cancel()
-            try:
+            with contextlib.suppress(asyncio.CancelledError):
                 await self._heartbeat_task
-            except asyncio.CancelledError:
-                pass
             self._discovery_log.debug("Heartbeat stopped")
 
         self.logger.info("ServiceBroker is stopping...")
@@ -158,7 +159,7 @@ class MockBroker:
 
 async def run_single_worker_demo(node_id: str, with_repl: bool = True, heartbeat: float = 0):
     """Run a single worker demo with mock broker."""
-    from moleculerpy_repl.repl import REPL as MoleculerPyREPL
+    from moleculerpy_repl.repl import REPL
 
     print("=" * 60)
     print("MoleculerPy Runner Demo (Single Worker Mode)")
@@ -176,7 +177,7 @@ async def run_single_worker_demo(node_id: str, with_repl: bool = True, heartbeat
         # Start REPL
         # Note: REPL.run() calls broker.stop() in finally block,
         # so we don't need to stop it here
-        repl = MoleculerPyREPL(
+        repl = REPL(
             broker=broker,
             delimiter=f"{node_id} $ ",
         )
@@ -220,14 +221,18 @@ Note: Multi-worker mode (-i > 1) requires actual MoleculerPy installation.
 For testing REPL and commands, use single worker mode.
 """,
     )
-    parser.add_argument("-i", "--instances", type=int, default=1,
-                        help="Number of worker instances (requires MoleculerPy for >1)")
-    parser.add_argument("-r", "--repl", action="store_true",
-                        help="Start REPL")
-    parser.add_argument("-n", "--node-id", type=str, default="demo-node",
-                        help="Node ID prefix")
-    parser.add_argument("--heartbeat", type=float, default=0,
-                        help="Heartbeat interval in seconds (0 = disabled)")
+    parser.add_argument(
+        "-i",
+        "--instances",
+        type=int,
+        default=1,
+        help="Number of worker instances (requires MoleculerPy for >1)",
+    )
+    parser.add_argument("-r", "--repl", action="store_true", help="Start REPL")
+    parser.add_argument("-n", "--node-id", type=str, default="demo-node", help="Node ID prefix")
+    parser.add_argument(
+        "--heartbeat", type=float, default=0, help="Heartbeat interval in seconds (0 = disabled)"
+    )
 
     args = parser.parse_args()
 
