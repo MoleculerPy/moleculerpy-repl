@@ -1,4 +1,7 @@
-"""Bench command — Benchmark a service action."""
+"""Bench command — Benchmark a service action.
+
+Node.js equivalent: moleculer-repl/src/commands/bench.js
+"""
 
 from __future__ import annotations
 
@@ -9,7 +12,8 @@ from ..parser import ParsedArgs
 from .base import BaseCommand, CommandResult
 
 _DEFAULT_NUM = 1000
-_DEFAULT_TIME = 0  # 0 means use --num instead
+# Node.js: if neither --num nor --time given, defaults to 5 seconds
+_DEFAULT_TIME = 5.0
 
 
 class BenchCommand(BaseCommand):
@@ -17,7 +21,7 @@ class BenchCommand(BaseCommand):
 
     name = "bench"
     description = "Benchmark a service action"
-    usage = "bench <action> [jsonParams] [--num N] [--time T]"
+    usage = "bench <action> [jsonParams] [--num N] [--time T] [--nodeID id]"
 
     async def execute(self, broker: Any, args: ParsedArgs) -> CommandResult:
         """Execute the bench command."""
@@ -29,16 +33,21 @@ class BenchCommand(BaseCommand):
 
         action_name = args.positional[0]
 
-        # Parse num and time from flags
+        # Parse flags
+        has_num = "num" in args.flags
+        has_time = "time" in args.flags
         num = int(args.flags.get("num", _DEFAULT_NUM))
         duration = float(args.flags.get("time", _DEFAULT_TIME))
 
-        # Build params from payload
-        params = dict(args.payload) if args.payload else {}
+        # Node.js: if --num given explicitly, use count-based mode
+        # If --time given, use time-based mode
+        # If neither, default to time-based (5s)
+        use_time = not has_num or has_time
 
-        # Try to parse second positional as JSON params
+        # Build params
+        params = dict(args.payload) if args.payload else {}
         if len(args.positional) > 1:
-            import json
+            import json  # noqa: PLC0415
 
             try:
                 extra = json.loads(args.positional[1])
@@ -48,7 +57,9 @@ class BenchCommand(BaseCommand):
                 pass
 
         try:
-            output = await _run_benchmark(broker, action_name, params, num, duration)
+            output = await _run_benchmark(
+                broker, action_name, params, num if not use_time else 0, duration if use_time else 0
+            )
             return CommandResult(success=True, output=output)
         except Exception as e:
             return CommandResult(success=False, error=f"Benchmark failed: {e}")
@@ -67,50 +78,56 @@ async def _run_benchmark(
 
     print(f"Benchmarking '{action}'...")
 
+    # Track total wall-clock time for real RPS calculation
+    wall_start = time.perf_counter()
+
     if duration > 0:
         # Time-based: run for `duration` seconds
-        end_time = time.perf_counter() + duration
+        end_time = wall_start + duration
         while time.perf_counter() < end_time:
             t0 = time.perf_counter()
             try:
                 await broker.call(action, params)
-                timings.append((time.perf_counter() - t0) * 1000)
             except Exception:
                 errors += 1
+            # Record time for ALL calls including errors (audit fix H3/M3)
+            timings.append((time.perf_counter() - t0) * 1000)
     else:
         # Count-based: run `num` iterations
         for _ in range(num):
             t0 = time.perf_counter()
             try:
                 await broker.call(action, params)
-                timings.append((time.perf_counter() - t0) * 1000)
             except Exception:
                 errors += 1
+            timings.append((time.perf_counter() - t0) * 1000)
 
-    return _format_stats(action, timings, errors)
+    wall_total = time.perf_counter() - wall_start
+    return _format_stats(action, timings, errors, wall_total)
 
 
-def _format_stats(action: str, timings: list[float], errors: int) -> str:
+def _format_stats(action: str, timings: list[float], errors: int, wall_seconds: float) -> str:
     """Format benchmark statistics."""
-    total = len(timings) + errors
+    total = len(timings)
 
     if not timings:
-        return f"Benchmark '{action}': 0 successful calls, {errors} errors"
+        return f"Benchmark '{action}': 0 calls, {errors} errors"
 
     total_time_ms = sum(timings)
-    avg_ms = total_time_ms / len(timings)
+    avg_ms = total_time_ms / total
     min_ms = min(timings)
     max_ms = max(timings)
 
-    # req/sec based on average latency
-    rps = 1000.0 / avg_ms if avg_ms > 0 else 0.0
+    # Real throughput RPS (Node.js: resCount / duration * 1000)
+    rps = total / wall_seconds if wall_seconds > 0 else 0.0
 
     lines = [
         f"Benchmark: {action}",
         "-" * 40,
         f"  Total calls:   {total}",
-        f"  Successful:    {len(timings)}",
+        f"  Successful:    {total - errors}",
         f"  Errors:        {errors}",
+        f"  Duration:      {wall_seconds:.3f}s",
         f"  Req/sec:       {rps:.1f}",
         "",
         "Latency:",

@@ -1,4 +1,8 @@
-"""Load command — Load a service from a file."""
+"""Load command — Load a service from a file.
+
+WARNING: This command executes arbitrary Python code from the specified file.
+Only load files from trusted sources.
+"""
 
 from __future__ import annotations
 
