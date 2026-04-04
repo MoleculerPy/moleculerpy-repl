@@ -6,13 +6,22 @@ This module provides all built-in commands and the registry.
 # Import all command classes
 from .actions import ActionsCommand
 from .base import BaseCommand, CommandRegistry, CommandResult
+from .bench import BenchCommand
+from .cache import CacheCommand
 from .call import CallCommand
+from .cls import ClsCommand
 from .dcall import DirectCallCommand
+from .destroy import DestroyCommand
 from .emit import BroadcastCommand, EmitCommand
+from .env import EnvCommand
 from .events import EventsCommand
 from .info import InfoCommand
+from .listener import ListenerCommand
+from .load import LoadCommand
 from .loglevel import LogLevelCommand
+from .metrics import MetricsCommand
 from .nodes import NodesCommand
+from .quit import QuitCommand
 from .services import ServicesCommand
 
 
@@ -24,14 +33,23 @@ def get_builtin_commands() -> list[type[BaseCommand]]:
     """
     return [
         ActionsCommand,
+        BenchCommand,
         BroadcastCommand,
+        CacheCommand,
         CallCommand,
+        ClsCommand,
+        DestroyCommand,
         DirectCallCommand,
         EmitCommand,
+        EnvCommand,
         EventsCommand,
         InfoCommand,
+        ListenerCommand,
+        LoadCommand,
         LogLevelCommand,
+        MetricsCommand,
         NodesCommand,
+        QuitCommand,
         ServicesCommand,
     ]
 
@@ -56,13 +74,22 @@ __all__ = [
     "create_default_registry",
     # Individual commands
     "ActionsCommand",
+    "BenchCommand",
     "BroadcastCommand",
+    "CacheCommand",
     "CallCommand",
+    "ClsCommand",
+    "DestroyCommand",
     "DirectCallCommand",
     "EmitCommand",
+    "EnvCommand",
     "EventsCommand",
     "InfoCommand",
+    "ListenerCommand",
+    "LoadCommand",
     "LogLevelCommand",
+    "MetricsCommand",
     "NodesCommand",
+    "QuitCommand",
     "ServicesCommand",
 ]
