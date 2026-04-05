@@ -70,8 +70,14 @@ class LoadCommand(BaseCommand):
                     error=f"No Service subclass found in {file_path.name}",
                 )
 
-            svc = service_class(broker)
-            await broker.addLocalService(svc)
+            svc = service_class()
+            # Use broker.register() — the standard MoleculerPy API
+            if hasattr(broker, "register"):
+                await broker.register(svc)
+            elif hasattr(broker, "addLocalService"):
+                await broker.addLocalService(svc)
+            else:
+                return CommandResult(success=False, error="Cannot register service: no register method")
 
             return CommandResult(
                 success=True,
