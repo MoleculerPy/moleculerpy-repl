@@ -39,7 +39,10 @@ class CacheCommand(BaseCommand):
 
         try:
             if hasattr(cacher, "keys"):
-                keys = await cacher.keys(pattern) if pattern else await cacher.keys()
+                raw_keys = cacher.keys(pattern) if pattern else cacher.keys()
+                # keys() may be sync or async depending on cacher impl
+                import asyncio
+                keys = (await raw_keys) if asyncio.iscoroutine(raw_keys) else raw_keys
             else:
                 return CommandResult(
                     success=False,
